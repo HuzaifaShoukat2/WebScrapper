@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebScrapper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <span class="header-icon">🕷️</span>
+    <div class="header-text">
+      <h1>WebScrapper</h1>
+      <p>Public Web Recon</p>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <button id="btn-current-site" class="icon-btn" title="Scan current website">🌐</button>
+    <input type="text" id="domain-input" placeholder="example.com" />
+    <button id="btn-scan" class="icon-btn" title="Search">🔍</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-emails">📧 Emails</button>
+    <button class="tab-btn" data-tab="tab-tech">🧩 Technology</button>
+  </div>
+
+  <div class="scan-status" id="scan-status" style="display: none;">
+    <div class="status-info">
+      <p id="status-text">Scanning...</p>
+      <div class="status-stats">
+        <span id="stat-emails">Emails: 0</span>
+        <span id="stat-tech">Technologies: 0</span>
+      </div>
+    </div>
+    <button id="btn-cancel" class="cancel-btn" title="Cancel Scan">✕</button>
+  </div>
+
+  <div class="tab-content active" id="tab-emails">
+    <div class="actions-bar" id="emails-actions" style="display: none;">
+      <span id="emails-count-label">Found: 0</span>
+      <button id="btn-copy-all" class="copy-btn" title="Copy All">📋</button>
+    </div>
+    <div id="emails-list" class="results-list">
+      <!-- Emails go here -->
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-tech">
+    <div id="tech-list" class="results-list">
+      <!-- Tech goes here -->
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
