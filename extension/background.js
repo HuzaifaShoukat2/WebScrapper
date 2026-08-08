@@ -26,20 +26,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-async function startScan(domain) {
-  scanState = {
-    status: 'scanning',
-    domain: domain,
-    emails: [],
-    tech: [],
-    error: null
-  };
-  
-  // Set badge to scanning state
-  chrome.action.setBadgeText({ text: '...' });
-  chrome.action.setBadgeBackgroundColor({ color: '#3b82f6' });
-  
-  notifyPopup();
+async function startScan(domain, isRetry = false) {
+  if (!isRetry) {
+    scanState = {
+      status: 'scanning',
+      domain: domain,
+      emails: [],
+      tech: [],
+      error: null
+    };
+    
+    // Set badge to scanning state
+    chrome.action.setBadgeText({ text: '...' });
+    chrome.action.setBadgeBackgroundColor({ color: '#3b82f6' });
+    
+    notifyPopup();
+  } else {
+    scanState.error = "Bypassing Vercel Security Checkpoint...";
+    scanState.status = 'error'; // Temp to trigger UI update
+    notifyPopup();
+    scanState.status = 'scanning';
+    scanState.error = null;
+  }
 
   try {
     const controller = new AbortController();
@@ -60,6 +68,12 @@ async function startScan(domain) {
     }
 
     if (!response.ok) {
+      if (response.status === 403 && !isRetry) {
+        // Trigger automated bypass!
+        await handleVercelBypass();
+        // Retry scan once
+        return startScan(domain, true);
+      }
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || `HTTP error ${response.status}`);
     }
@@ -106,5 +120,18 @@ function notifyPopup() {
     data: scanState
   }).catch(() => {
     // Popup is probably closed, which is fine. State is maintained here.
+  });
+}
+
+function handleVercelBypass() {
+  return new Promise((resolve) => {
+    chrome.tabs.create({ url: `${API_BASE}/api/health`, active: false }, (tab) => {
+      // Vercel's JS challenge usually takes 3-5 seconds.
+      setTimeout(() => {
+        chrome.tabs.remove(tab.id, () => {
+          resolve();
+        });
+      }, 5000);
+    });
   });
 }
