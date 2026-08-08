@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000'; // For production, change to the Vercel URL
+const API_BASE = 'https://web-scrapper-rho-blue.vercel.app'; // For production, change to the Vercel URL
 let scanState = {
   status: 'idle', // idle, scanning, completed, cancelled, error
   domain: '',
